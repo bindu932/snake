@@ -4,7 +4,57 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Snake and Ladder</title>
-  <style href="style.css"></style>
+  <style>
+    .container {
+      display: inline-grid;
+      padding: 10px;
+      grid-template-columns: repeat(10, 50px);
+      grid-template-rows: repeat(10, 50px);
+      background: url('snake.jpg');
+      background-repeat: no-repeat;
+      background-size: 520px 520px;
+    }
+    .container div {
+      border: 1px solid black;
+      font-size: small;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      position: relative;
+    }
+    .container img {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+    }
+    button {
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin-top: 20px;
+      font-size: 18px;
+      padding: 10px 20px;
+      background: blue;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .info-box {
+      margin-top: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+      color: #000;
+      width: 260px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      font-family: Arial, sans-serif;
+      line-height: 1.4;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -117,11 +167,118 @@
   <div id="game-info" class="info-box"></div>
 <button onclick="downloadCSV()">Download Game History</button>
  
-  <audio id="diceSound" src="dice-142528.mp3"></audio>
-  <audio id="winSound" src="win-176035.mp3"></audio>
-  <audio id="ladderSound" src="game-start-6104.mp3"></audio>
-  <audio id="snakeSound" src="snake-hiss-95241.mp3"></audio>
-</body>
-<script src="snake.js"></script>
+  <audio id="diceSound" src="sounds/dice-roll-201898.mp3"></audio>
+  <audio id="winSound" src="sounds/win-176035.mp3"></audio>
+  <audio id="ladderSound" src="sounds/game-start-6104.mp3"></audio>
+  <audio id="snakeSound" src="sounds/snake-hiss-95241.mp3"></audio>
 
+  <script>
+   const snakes = {
+  99: 77, 95: 75, 93: 69, 87: 24, 67: 30, 63: 19, 59: 17, 16: 7
+};
+const ladders = {
+  9: 27, 28: 51, 25: 54, 18: 37, 56: 64, 76: 97, 79: 100, 68: 88
+};
+
+const playerIcons = [
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWJj8_xtSUh__M8_HA_GU6eG4lpV75VNup_g&s", 
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe43cidD5-QOlCnGVL4ODFHGt280VP3Li1vw&s"  
+];
+
+let playerPositions = [0, 0];
+let currentPlayer = 0;
+let gameHistory = []; 
+
+function roll() {
+  document.getElementById("diceSound").currentTime = 0;
+  document.getElementById("diceSound").play(); // 
+
+  const rollValue = 1 + Math.floor(Math.random() * 6);
+  let nextPos = playerPositions[currentPlayer] + rollValue;
+
+
+  if (nextPos > 100) {
+    updateInfoBox(rollValue, "Invalid move: You rolled too high");
+    return;
+  }
+
+  let action = "normal";
+
+  if (ladders[nextPos]) {
+    nextPos = ladders[nextPos];
+    action = "ladder";
+  } else if (snakes[nextPos]) {
+    nextPos = snakes[nextPos];
+    action = "snake";
+  }
+
+  const oldTile = document.querySelector(`.tile${playerPositions[currentPlayer]}`);
+  if (oldTile) {
+    const images = oldTile.querySelectorAll("img");
+    images.forEach(img => {
+      if (img.src === playerIcons[currentPlayer]) img.remove();
+    });
+  }
+
+  playerPositions[currentPlayer] = nextPos;
+
+  const newTile = document.querySelector(`.tile${playerPositions[currentPlayer]}`);
+  const img = document.createElement("img");
+  img.src = playerIcons[currentPlayer];
+  newTile.appendChild(img);
+
+  if (action === "ladder") {
+    document.getElementById("ladderSound").play();
+  } else if (action === "snake") {
+    document.getElementById("snakeSound").play();
+  }
+
+  updateInfoBox(rollValue, action);
+
+
+  gameHistory.push({
+    player: currentPlayer + 1,
+    rollValue: rollValue,
+    action: action,
+    position: nextPos
+  });
+
+  
+  currentPlayer = currentPlayer === 0 ? 1 : 0;
+}
+
+function updateInfoBox(rollValue, action) {
+  let infoText = `It's Player ${currentPlayer + 1}'s Turn. `;
+  infoText += `Player ${currentPlayer + 1} rolled a ${rollValue}.`;
+
+  if (action === "ladder") {
+    infoText += " They climbed a ladder!";
+  } else if (action === "snake") {
+    infoText += " They got bitten by a snake!";
+  } else if (playerPositions[currentPlayer] === 100) {
+    document.getElementById("winSound").play();
+    infoText = `Player ${currentPlayer + 1} WON! Congratulations!`;
+  }
+
+  document.getElementById("game-info").textContent = infoText;
+}
+
+function downloadCSV() {
+  const headers = ['Player', 'Roll Value', 'Action', 'Position'];
+  let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
+
+  gameHistory.forEach((entry) => {
+    const row = [entry.player, entry.rollValue, entry.action, entry.position].join(",");
+    csvContent += row + "\n";
+  });
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "game_history.csv");
+  document.body.appendChild(link);
+  link.click();
+}
+</script>
+</body>
 </html>
