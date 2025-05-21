@@ -4,126 +4,183 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Snake and Ladder</title>
-  <style href="style.css"></style>
+  <style>
+    
+    .container {
+      display: inline-grid;
+      padding: 10px;
+      grid-template-columns: repeat(10, 50px);
+      grid-template-rows: repeat(10, 50px);
+      background: url('images/snake.jpg');
+      background-repeat: no-repeat;
+      background-size: 520px 520px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .container div {
+      border: 1px solid black;
+      font-size: small;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .container img {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+    }
+
+    button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      font-size: 18px;
+      padding: 10px 20px;
+      background: blue;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 2;
+      position: relative;
+    }
+
+    .info-box {
+      margin-top: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+      color: #000;
+      width: 260px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      font-family: Arial, sans-serif;
+      line-height: 1.4;
+      z-index: 2;
+      position: relative;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+ #background-video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 820px;   /* Set fixed width */
+  height: 820px;  /* Set fixed height */
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  object-fit: cover;
+}
+
+    #game-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      flex-direction: column;
+      color: rgb(14, 15, 14);
+    }
+
+    #loader-bar {
+      width: 50%;
+      height: 20px;
+      background: #444;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    #loader-progress {
+      width: 0%;
+      height: 100%;
+      background: limegreen;
+      animation: progress 10s linear forwards;
+    }
+    #board-background {
+  position: absolute; /* behind the board */
+  top: 50%;
+  left: 50%;
+  width: 90%; /* same as board size */
+  height: 90%;
+  transform: translate(-50%, -50%);
+  background-image: url('https://i.ytimg.com/vi/PzLYKY1nPsY/maxresdefault.jpg'); /* Your background image */
+  background-size: cover;
+  background-position: center;
+  /* border-radius: 100%; Circular shape */
+  filter: brightness(0.8); /* Slightly dimmed so board is visible on top */
+  z-index: 0;
+}
+  </style>
 </head>
 <body>
-  <div class="container">
-    
-    <div class="tile100"></div>
-    <div class="tile99"></div>
-    <div class="tile98"></div>
-    <div class="tile97"></div>
-    <div class="tile96"></div>
-    <div class="tile95"></div>
-    <div class="tile94"></div>
-    <div class="tile93"></div>
-    <div class="tile92"></div>
-    <div class="tile91"></div>
-    <div class="tile81"></div>
-    <div class="tile82"></div>
-    <div class="tile83"></div>
-    <div class="tile84"></div>
-    <div class="tile85"></div>
-    <div class="tile86"></div>
-    <div class="tile87"></div>
-    <div class="tile88"></div>
-    <div class="tile89"></div>
-    <div class="tile90"></div>
-    <div class="tile80"></div>
-    <div class="tile79"></div>
-    <div class="tile78"></div>
-    <div class="tile77"></div>
-    <div class="tile76"></div>
-    <div class="tile75"></div>
-    <div class="tile74"></div>
-    <div class="tile73"></div>
-    <div class="tile72"></div>
-    <div class="tile71"></div>
-    <div class="tile61"></div>
-    <div class="tile62"></div>
-    <div class="tile63"></div>
-    <div class="tile64"></div>
-    <div class="tile65"></div>
-    <div class="tile66"></div>
-    <div class="tile67"></div>
-    <div class="tile68"></div>
-    <div class="tile69"></div>
-    <div class="tile70"></div>
-    <div class="tile60"></div>
-    <div class="tile59"></div>
-    <div class="tile58"></div>
-    <div class="tile57"></div>
-    <div class="tile56"></div>
-    <div class="tile55"></div>
-    <div class="tile54"></div>
-    <div class="tile53"></div>
-    <div class="tile52"></div>
-    <div class="tile51"></div>
-    <div class="tile41"></div>
-    <div class="tile42"></div>
-    <div class="tile43"></div>
-    <div class="tile44"></div>
-    <div class="tile45"></div>
-    <div class="tile46"></div>
-    <div class="tile47"></div>
-    <div class="tile48"></div>
-    <div class="tile49"></div>
-    <div class="tile50"></div>
-    <div class="tile40"></div>
-    <div class="tile39"></div>
-    <div class="tile38"></div>
-    <div class="tile37"></div>
-    <div class="tile36"></div>
-    <div class="tile35"></div>
-    <div class="tile34"></div>
-    <div class="tile33"></div>
-    <div class="tile32"></div>
-    <div class="tile31"></div>
-    <div class="tile21"></div>
-    <div class="tile22"></div>
-    <div class="tile23"></div>
-    <div class="tile24"></div>
-    <div class="tile25"></div>
-    <div class="tile26"></div>
-    <div class="tile27"></div>
-    <div class="tile28"></div>
-    <div class="tile29"></div>
-    <div class="tile30"></div>
-    <div class="tile20"></div>
-    <div class="tile19"></div>
-    <div class="tile18"></div>
-    <div class="tile17"></div>
-    <div class="tile16"></div>
-    <div class="tile15"></div>
-    <div class="tile14"></div>
-    <div class="tile13"></div>
-    <div class="tile12"></div>
-    <div class="tile11"></div>
-    <div class="tile1"></div>
-    <div class="tile2"></div>
-    <div class="tile3"></div>
-    <div class="tile4"></div>
-    <div class="tile5"></div>
-    <div class="tile6"></div>
-    <div class="tile7"></div>
-    <div class="tile8"></div>
-    <div class="tile9"></div>
-    <div class="tile10"></div>
+   <div id="board-background"></div>
+  <video autoplay muted loop id="background-video">
+    <source src="videos/boardsnake.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+ 
+  <div id="loader">
+    <h1>Loading Game...</h1>
+    <div id="loader-bar">
+      <div id="loader-progress"></div>
+    </div>
   </div>
 
+  <div id="game-wrapper" style="display:none">
+    <div id="boardimage"></div>
+    <div class="container" id="board"></div>
+    <button onclick="roll()">Roll Dice</button>
+    <div id="game-info" class="info-box"></div>
+    <button onclick="downloadCSV()">Download Game History</button>
 
-  <button onclick="roll()">Roll Dice</button>
 
-  <div id="game-info" class="info-box"></div>
-<button onclick="downloadCSV()">Download Game History</button>
- 
-  <audio id="diceSound" src="dice-142528.mp3"></audio>
-  <audio id="winSound" src="win-176035.mp3"></audio>
-  <audio id="ladderSound" src="game-start-6104.mp3"></audio>
-  <audio id="snakeSound" src="snake-hiss-95241.mp3"></audio>
+  <audio id="diceSound" src="sounds/dice-roll-201898.mp3"></audio>
+  <audio id="winSound" src="sounds/win-176035.mp3"></audio>
+  <audio id="ladderSound" src="sounds/game-start-6104.mp3"></audio>
+  <audio id="snakeSound" src="sounds/snake-hiss-95241.mp3"></audio>
 
   <script>
-   const snakes = {
+   
+    const board = document.getElementById("board");
+
+  for (let row = 9; row >= 0; row--) {
+    for (let col = 0; col < 10; col++) {
+      let tileNum = row % 2 === 0 ? row * 10 + col + 1 : row * 10 + (9 - col) + 1;
+      const tile = document.createElement("div");
+      tile.className = `tile tile${tileNum}`;
+      // tile.textContent = tileNum; // show tile number (optional)
+      board.appendChild(tile);
+    }
+  }
+
+    const snakes = {
   99: 77, 95: 75, 93: 69, 87: 24, 67: 30, 63: 19, 59: 17, 16: 7
 };
 const ladders = {
@@ -229,6 +286,20 @@ function downloadCSV() {
   document.body.appendChild(link);
   link.click();
 }
-</script>
+
+    // Loader Simulation
+    let loaderProgress = 0;
+const loaderInterval = setInterval(() => {
+  loaderProgress += 1; // was 2 — reduced to slow it down
+  document.getElementById("loader-progress").style.width = loaderProgress + "%";
+  if (loaderProgress >= 100) {
+    clearInterval(loaderInterval);
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("game-wrapper").style.display = "flex";
+    document.getElementById("background-video").style.display = "none";
+  }
+}, 10); // 
+
+  </script>
 </body>
 </html>
